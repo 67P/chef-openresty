@@ -156,6 +156,8 @@ default['openresty']['client_body_buffer_size']       = '8K'
 default['openresty']['large_client_header_buffers']   = '32 32k'
 default['openresty']['types_hash_max_size']           = 2048
 default['openresty']['types_hash_bucket_size']        = 64
+default['openresty']['variables_hash_max_size']       = 1024
+default['openresty']['variables_hash_bucket_size']    = 64
 
 # Open file cache - for metadata operations only
 default['openresty']['open_file_cache'] = {

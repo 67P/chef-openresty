@@ -89,6 +89,9 @@ http {
   types_hash_max_size <%= node['openresty']['types_hash_max_size'] %>;
   types_hash_bucket_size <%= node['openresty']['types_hash_bucket_size'] %>;
 
+  variables_hash_max_size <%= node['openresty']['variables_hash_max_size'] %>;
+  variables_hash_bucket_size <%= node['openresty']['variables_hash_bucket_size'] %>;
+
   <% if node['openresty']['lua_package_path'] %>
   lua_package_path <%= node['openresty']['lua_package_path'] %>;
   <% end %>
