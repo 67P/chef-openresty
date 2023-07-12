@@ -41,9 +41,6 @@ action :enable do
     notifies :reload, node['openresty']['service']['resource'], new_resource.timing
     not_if { ::File.symlink?("#{node['openresty']['dir']}/sites-enabled/#{link_name}") }
   end
-  if site.updated_by_last_action? || (tpl.updated_by_last_action? rescue false)
-    converge_by "enable site"
-  end
 end
 
 action :disable do
@@ -54,8 +51,5 @@ action :disable do
       notifies :reload, node['openresty']['service']['resource'], new_resource.timing
     end
     only_if { ::File.symlink?("#{node['openresty']['dir']}/sites-enabled/#{link_name}") }
-  end
-  if site.updated_by_last_action?
-    converge_by "disable site"
   end
 end
