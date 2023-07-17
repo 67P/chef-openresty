@@ -22,9 +22,9 @@
 use_inline_resources
 
 action :enable do
-  link_name = (new_resource.name == 'default') ? '000-default' : new_resource.name
-  tpl = if new_resource.template
-    template "#{node['openresty']['dir']}/sites-available/#{link_name}" do
+  site_name = (new_resource.name == 'default') ? '000-default' : new_resource.name
+  if new_resource.template
+    template "#{node['openresty']['dir']}/sites-available/#{site_name}" do
       source new_resource.template
       owner 'root'
       group 'root'
@@ -36,20 +36,20 @@ action :enable do
       end
     end
   end
-  site = execute "nxensite #{link_name}" do
-    command "/usr/sbin/nxensite #{link_name}"
+  execute "nxensite #{site_name}" do
+    command "/usr/sbin/nxensite #{site_name}"
     notifies :reload, node['openresty']['service']['resource'], new_resource.timing
-    not_if { ::File.symlink?("#{node['openresty']['dir']}/sites-enabled/#{link_name}") }
+    not_if { ::File.symlink?("#{node['openresty']['dir']}/sites-enabled/#{site_name}") }
   end
 end
 
 action :disable do
-  link_name = (new_resource.name == 'default') ? '000-default' : new_resource.name
-  site = execute "nxdissite #{link_name}" do
-    command "/usr/sbin/nxdissite #{link_name}"
+  site_name = (new_resource.name == 'default') ? '000-default' : new_resource.name
+  execute "nxdissite #{site_name}" do
+    command "/usr/sbin/nxdissite #{site_name}"
     if node['openresty']['service']['start_on_boot']
       notifies :reload, node['openresty']['service']['resource'], new_resource.timing
     end
-    only_if { ::File.symlink?("#{node['openresty']['dir']}/sites-enabled/#{link_name}") }
+    only_if { ::File.symlink?("#{node['openresty']['dir']}/sites-enabled/#{site_name}") }
   end
 end
