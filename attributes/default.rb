@@ -140,7 +140,7 @@ default['openresty']['worker_connections']            = 4096
 default['openresty']['worker_rlimit_nofile']          = nil
 default['openresty']['multi_accept']                  = false
 
-default['openresty']['try_aio']                       = true
+default['openresty']['try_aio']                       = false
 
 # epoll is available only on Linux kernels >= 2.6
 if node['os'].eql?('linux') && node['kernel']['release'].to_f >= 2.6
