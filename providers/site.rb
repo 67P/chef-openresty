@@ -24,6 +24,24 @@ use_inline_resources
 action :enable do
   site_name = (new_resource.name == 'default') ? '000-default' : new_resource.name
   if new_resource.template
+    if new_resource.redirect_http
+      template "#{node['openresty']['dir']}/sites-available/#{site_name}_http" do
+        source "redirect_http.conf.erb"
+        owner 'root'
+        group 'root'
+        mode 00644
+        variables new_resource.variables
+        cookbook 'openresty'
+        if node['openresty']['service']['start_on_boot']
+          notifies :reload, node['openresty']['service']['resource'], new_resource.timing
+        end
+      end
+      execute "nxensite #{site_name}_http" do
+        command "/usr/sbin/nxensite #{site_name}_http"
+        notifies :reload, node['openresty']['service']['resource'], new_resource.timing
+        not_if { ::File.symlink?("#{node['openresty']['dir']}/sites-enabled/#{site_name}_http") }
+      end
+    end
     template "#{node['openresty']['dir']}/sites-available/#{site_name}" do
       source new_resource.template
       owner 'root'
@@ -45,6 +63,15 @@ end
 
 action :disable do
   site_name = (new_resource.name == 'default') ? '000-default' : new_resource.name
+  if new_resource.redirect_http
+    execute "nxdissite #{site_name}_http" do
+      command "/usr/sbin/nxdissite #{site_name}_http"
+      if node['openresty']['service']['start_on_boot']
+        notifies :reload, node['openresty']['service']['resource'], new_resource.timing
+      end
+      only_if { ::File.symlink?("#{node['openresty']['dir']}/sites-enabled/#{site_name}_http") }
+    end
+  end
   execute "nxdissite #{site_name}" do
     command "/usr/sbin/nxdissite #{site_name}"
     if node['openresty']['service']['start_on_boot']
