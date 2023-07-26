@@ -4,12 +4,12 @@
 
 openresty_dir = '/usr/local/openresty'
 
-node.force_default['openresty']['service']['resource'] = 'service[openresty]'
-node.force_default['openresty']['dir']                 = '/etc/openresty'
-node.force_default['openresty']['log_dir']             = "/var/log/nginx"
-node.force_default['openresty']['cache_dir']           = '/var/cache/nginx'
-node.force_default['openresty']['binary']              = "#{openresty_dir}/nginx/sbin/nginx"
-node.force_default['openresty']['pid']                 = "#{openresty_dir}/nginx/logs/nginx.pid"
+node.force_default['openresty']['service']['resource']  = 'service[openresty]'
+node.force_default['openresty']['dir']                  = '/etc/openresty'
+node.force_default['openresty']['log_dir']              = "/var/log/nginx"
+node.force_default['openresty']['cache_dir']            = '/var/cache/nginx'
+node.force_default['openresty']['binary']               = "#{openresty_dir}/nginx/sbin/nginx"
+node.force_default['openresty']['pid']                  = "#{openresty_dir}/nginx/logs/nginx.pid"
 # Needed to compile LuaRocks
 node.force_default['openresty']['source']['prefix']    = openresty_dir
 
@@ -36,11 +36,21 @@ package 'openresty' do
 end
 
 include_recipe 'openresty::ohai_plugin'
+include_recipe 'openresty::commons_cleanup'
 include_recipe 'openresty::commons_user'
 include_recipe 'openresty::commons_dir'
 include_recipe 'openresty::commons_script'
 include_recipe 'openresty::commons_conf'
 include_recipe 'openresty::luarocks'
+
+file "#{openresty_dir}/nginx/html/index.html" do
+  action :delete
+  backup false
+end
+file "#{openresty_dir}/nginx/html/50x.html" do
+  action :delete
+  backup false
+end
 
 service 'openresty' do
   supports :status => true, :restart => true, :reload => true
