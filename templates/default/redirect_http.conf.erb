@@ -1,6 +1,6 @@
 server {
   listen <%= "#{node['openresty']['listen_ip']}:" if node['openresty']['listen_ip'] %>80;
-  server_name <%= @domain %>;
+  server_name <%= @domain || @server_name %>;
   location / {
     return 301 https://$host$request_uri;
   }
