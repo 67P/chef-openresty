@@ -106,3 +106,7 @@ http {
   include <%= node['openresty']['dir'] %>/conf.d/*.conf;
   include <%= node['openresty']['dir'] %>/sites-enabled/*;
 }
+
+stream {
+  include <%= node['openresty']['dir'] %>/streams-enabled/*;
+}
