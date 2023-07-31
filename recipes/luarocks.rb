@@ -23,7 +23,7 @@
 node.override['openresty']['or_modules']['luajit'] = true
 
 # Install needed packages
-%w{ zip unzip }.each do |pkg|
+%w{ build-essential zip unzip }.each do |pkg|
   package pkg
 end
 
